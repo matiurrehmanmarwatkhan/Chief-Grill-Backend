@@ -1,0 +1,16 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import express from "express";
+import { getReservations, addReservation, updateReservation, deleteReservation } from "../controllers/reservationController.js";
+
+const router = express.Router();
+
+router.get("/", getReservations);
+router.post("/", addReservation);
+router.put("/:id", updateReservation);
+router.delete("/:id", deleteReservation);
+
+export default router;
