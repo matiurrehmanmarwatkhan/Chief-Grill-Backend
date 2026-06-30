@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import cors from "cors";
+import fs from "fs";
 
 import { connectDB } from "./config/db.js";
 import apiRoutes from "./routes/index.js";
@@ -34,13 +35,21 @@ async function startServer() {
   // API Routes
   app.use("/api", apiRoutes);
 
-  // Serve static frontend files in production
+  // Serve static frontend files in production if they exist
   if (process.env.NODE_ENV === "production") {
     const frontendDistPath = path.join(__dirname, "..", "Frontend", "dist");
-    app.use(express.static(frontendDistPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(frontendDistPath, "index.html"));
-    });
+    const indexPath = path.join(frontendDistPath, "index.html");
+    
+    if (fs.existsSync(indexPath)) {
+      app.use(express.static(frontendDistPath));
+      app.get("*", (req, res) => {
+        res.sendFile(indexPath);
+      });
+    } else {
+      app.get("*", (req, res) => {
+        res.send("Chief Grill API server is running in production mode. (Frontend build files not found)");
+      });
+    }
   } else {
     app.get("/", (req, res) => {
       res.send("Chief Grill API server is running in development mode.");
