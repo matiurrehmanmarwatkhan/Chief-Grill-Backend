@@ -22,6 +22,9 @@ const __dirname = path.dirname(__filename);
 const DB_PATH = path.join(__dirname, "..", "..", "Frontend", "data", "db.json");
 
 export async function connectDB() {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
   const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/chief_grill";
   console.log(`Connecting to MongoDB...`);
   try {
